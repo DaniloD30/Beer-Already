@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CadastroBebidas"
+    tools:layout_editor_absoluteY="81dp">
+
+
+    <EditText
+        android:id="@+id/edtFabricante"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Digite o fabricante/marca da bebida aqui"
+        android:inputType="textPersonName"
+        android:text="" />
+    
+
+    <EditText
+        android:id="@+id/edtMililitros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Digite os mililitros da bebida aqui"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        />
+
+    <EditText
+        android:id="@+id/edtEstabelecimento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:hint="Digite o estabelecimento da bebida aqui"
+        android:inputType="textPersonName"
+        />
+
+    <EditText
+        android:id="@+id/edtPreco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:hint="Digite o preço da bebida"
+        android:inputType="number|numberSigned|numberDecimal"
+        />
+
+
+    <Button
+        android:id="@+id/btnSalvar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Salvar" />
+
+    <Button
+        android:id="@+id/btnListarBebidas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listar Bebidas Cadastradas" />
+
+
+
+
+</LinearLayout>

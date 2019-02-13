@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">beer</string>
+    <string name="fabricante">Fabricante:</string>
+    <string name="cadastro_de_bebidas">Cadastro de Bebidas</string>
+    <string name="namee">Name</string>
+    <string name="fabricant">Fabricant</string>
+    <string name="mililitros">Mililitros:</string>
+    <string name="estabelecimento">Estabelecimento:</string>
+    <string name="cadastrodoestabelecimento">Cadastro do Estabelecimento</string>
+    <string name="salvar">Salvar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="nomee">Nome</string>
+    <string name="endereco">Endereço</string>
+    <string name="cadastro_da_bebida">Cadastro da Bebida</string>
+    <string name="nameeee">Name</string>
+    <string name="nameeeee">Name</string>
+    <string name="cancel">CANCELAR</string>
+    <string name="save">SALVAR</string>
+    <string name="nameeeeee">Name</string>
+    <string name="namme">Name</string>
+    <string name="pre_o">Preço</string>
+    <string name="estsabelecimento">Estsabelecimento</string>
+    <string name="mililitross">Mililitros</string>
+    <string name="fabrican">Fabricante</string>
+    <string name="cadastrar_bebida">Cadastrar Bebida</string>
+    <string name="cadastrar_mercado">CADASTRAR MERCADO</string>
+    <string name="compare_j">COMPARE JÁ</string>
+    <string name="endere_o">Endereço</string>
+    <string name="cadastro_do_estabelecimento">Cadastro do Estabelecimento</string>
+    <string name="nome">Nome</string>
+    <string name="salvarr">SALVAR</string>
+    <string name="cancelarr">CANCELAR</string>
+    <string name="naame">Name</string>
+    <string name="nname">Name</string>
+    <string name="title_activity_compare">Compare</string>
+    <string name="edtMililitros">Mililitros</string>
+    <string name="etdFabricante">Fabricante</string>
+    <string name="edtEstabelecimento">Estabelecimento</string>
+    <string name="edtPreco">Preço</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+</resources>

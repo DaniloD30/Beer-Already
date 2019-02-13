@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+    tools:context=".CestaActivity">
+
+    <EditText
+        android:id="@+id/edtNome"
+        android:layout_width="match_parent"
+        android:inputType="text"
+        android:hint="Digite aqui o nome da sua cesta"
+        android:layout_height="wrap_content" />
+
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Selecione as bebidas abaixo para adiciona-las a cesta"
+       android:textSize="16dp"
+       android:textStyle="bold|italic"/>
+
+    <ListView
+        android:id="@+id/lsvBebidas"
+        android:layout_width="match_parent"
+        android:layout_height="305dp"></ListView>
+
+    <Button
+        android:id="@+id/btnSalvar"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="Cadastrar bebida" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="Atualizar lista"
+        android:onClick="eventAtualizar"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+
+
+
+
+</LinearLayout>
