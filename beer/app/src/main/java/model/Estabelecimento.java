@@ -37,4 +37,9 @@ public class Estabelecimento {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return this.nome + " - " + this.endereço;
+    }
 }

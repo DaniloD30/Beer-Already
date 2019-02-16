@@ -97,5 +97,24 @@ public class CestaDao {
         return null;
     }
 
+    public boolean excluir(int idBebida){
+        SQLiteDatabase db = null;
+
+        try {
+            db = conexaoSQLite.getWritableDatabase();
+            db.delete(TABLE_CESTA, "ID = ?",  new String[]{String.valueOf(idBebida)});
+
+            // Cursor cursor = gw.getDatabase().rawQuery("DELETE FROM Bebidas WHERE ID = idBebida ", null);
+            return true;
+        } catch(Exception e){
+            Log.d("BEBIDADAO", "NÃO FOI POSSIVEL DELETAR A BEBIDA");
+            return false;
+        } finally {
+            if( db != null){
+                db.close();
+            }
+        }
+    }
+
 
 }

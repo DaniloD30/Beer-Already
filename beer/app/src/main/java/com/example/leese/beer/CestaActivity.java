@@ -82,7 +82,7 @@ public class CestaActivity extends AppCompatActivity {
             public void onClick(View view) {
                 EditText txtNome = findViewById(R.id.edtNome);
                 nomeCesta = txtNome.getText().toString();
-
+                // SE O NOME DA CESTA FOR REPETIDO, VAI TRAZER AS BEBIDAS SELECIONDAS DA PRIMEIRA CESTA
                 Cesta cesta = new Cesta();
                 cesta.setNome(nomeCesta);
                 cesta.addBebida(bebidasCesta);

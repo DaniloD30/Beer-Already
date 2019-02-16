@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.leese.beer.R;
 
+import java.util.Collections;
 import java.util.List;
 
 import model.Bebida;
@@ -68,6 +69,7 @@ public class AdapterListaOrdenada extends BaseAdapter {
     //atualiza a lista de produtos
     public void atualizar(List<Bebida> newList){
         this.bebidaList.clear();
+        Collections.sort(newList);
         this.bebidaList = newList;
         notifyDataSetChanged();
     }

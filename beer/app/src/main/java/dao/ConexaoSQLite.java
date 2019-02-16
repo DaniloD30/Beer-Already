@@ -13,6 +13,9 @@ public class ConexaoSQLite extends SQLiteOpenHelper {
     private final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS Bebidas (ID INTEGER PRIMARY KEY AUTOINCREMENT, Fabricante TEXT NOT NULL, " +
             "Mililitros REAL, Estabelecimento TEXT, Preço REAL NOT NULL);";
 
+  //  private final String CREATE_TABLE5 = "CREATE TABLE IF NOT EXISTS Bebidas5 (ID INTEGER PRIMARY KEY AUTOINCREMENT, Fabricante TEXT NOT NULL, " +
+    //            "Mililitros REAL, Estabelecimento TEXT, Preço REAL NOT NULL, " + " FOREIGN KEY (Estabelecimento) REFERENCES Estabelecimento(Nome));";
+
     private final String CREATE_TABLE2 = "CREATE TABLE IF NOT EXISTS Estabelecimento (ID INTEGER PRIMARY KEY AUTOINCREMENT, Nome TEXT NOT NULL, " +
             "Endereço TEXT);";
 
