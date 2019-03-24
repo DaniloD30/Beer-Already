@@ -18,7 +18,7 @@
     <ListView
         android:id="@+id/lsvCestas"
         android:layout_width="match_parent"
-        android:layout_height="350dp"></ListView>
+        android:layout_height="183dp"></ListView>
 
     <Button
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.example.leese.beer;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,7 +27,12 @@ import java.util.List;
 import adapters.AdapterCestas;
 import dao.CestaDao;
 import dao.ConexaoSQLite;
+import dao.RetrofitService;
+import dao.ServiceGenerator;
 import model.Cesta;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Main2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +41,9 @@ public class Main2Activity extends AppCompatActivity
     private final ConexaoSQLite conexaoSQLite = ConexaoSQLite.getInstance(this);
     private CestaDao daoCesta = new CestaDao(conexaoSQLite);
     private List<Cesta> cestaList;
+    private RetrofitService service;
+    ProgressDialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,7 @@ public class Main2Activity extends AppCompatActivity
         setContentView(R.layout.activity_main2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //       setSupportActionBar(toolbar);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -52,66 +62,65 @@ public class Main2Activity extends AppCompatActivity
 
             }
         });
-        cestaList = new ArrayList<>();
-        this.cestaList = daoCesta.retornarTodos();
+
+        dialog = new ProgressDialog(Main2Activity.this);
+        dialog.setMessage("Carregando...");
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitService service = ServiceGenerator
+                .createService(RetrofitService.class);
+
+        Call<List<Cesta>> call = service.getAllCestas();
+
+        //Preencher a list view com as cestas
+        // cestaList = new ArrayList<>();
+        //this.cestaList = daoCesta.retornarTodos();
         //Log.d("Compare","Tamanho na lista de cestas " + this.cestaList.size());
 
-        lsvCestas = (ListView) findViewById(R.id.lsvCestas);
-
-        this.adapterCestas = new AdapterCestas(Main2Activity.this, this.cestaList);
-
-        this.lsvCestas.setAdapter(this.adapterCestas);
-
-        this.lsvCestas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        call.enqueue(new Callback<List<Cesta>>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onResponse(Call<List<Cesta>> call, Response<List<Cesta>> response) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                final List<Cesta> cestaList;
+                cestaList = response.body();
+                Log.d("Compare"," " + cestaList.get(0));
+                lsvCestas = (ListView) findViewById(R.id.lsvCestas);
 
-                final Cesta cestaSelecionada = (Cesta) adapterCestas.getItem(position);
+                adapterCestas = new AdapterCestas(Main2Activity.this, cestaList);
+                lsvCestas.setAdapter(adapterCestas);
 
-
-                //Toast.makeText(ListarBebidasActivity.this, "Bebida: " + bebidaSelecionada.getFabricante(), Toast.LENGTH_SHORT);
-                final AlertDialog.Builder janelaEscolha = new AlertDialog.Builder(Main2Activity.this);
-
-                janelaEscolha.setNeutralButton("Melhor bebida", new DialogInterface.OnClickListener() {
+                lsvCestas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int id) {
+                    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                        final Cesta cestaSelecionada = (Cesta) adapterCestas.getItem(position);
                         Bundle bundleDadosCesta = new Bundle();
                         // fabricante, String estabelecimento, Double preco, double ml
-                        Log.d("CestaActivity","ID CESTA COMPARE:  " + cestaSelecionada.getId());
+                        Log.d("CestaActivity", "ID CESTA COMPARE:  " + cestaSelecionada.getId());
                         bundleDadosCesta.putInt("id_cesta", cestaSelecionada.getId());
                         bundleDadosCesta.putString("nome", cestaSelecionada.getNome());
 
                         Intent intentEditarBebidas = new Intent(Main2Activity.this, OrdenadaActivity.class);
                         intentEditarBebidas.putExtras(bundleDadosCesta);
                         startActivity(intentEditarBebidas);
-                    }
-                });
 
-                janelaEscolha.setNegativeButton("Excluir cesta", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        //excluir o produto
-                        boolean excluiu = daoCesta.excluir(cestaSelecionada.getId());
+                        // Toast.makeText(CestaActivity.this, "Bebida adicionada na cesta com sucesso", Toast.LENGTH_SHORT).show();
 
-                        dialog.cancel();
-
-                        if(excluiu) {
-                            adapterCestas.removerBebida(position);
-                            Toast.makeText(Main2Activity.this, "Cesta excluida com sucessso", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(Main2Activity.this, "Erro ao excluir produto", Toast.LENGTH_SHORT).show();
-                        }
+                        // PEGAR A BEBIDA SELECIONADA, COLOCAR NA CESTA
+                        // PRRENCHER A RECLYCLE VIEW DA CESTA NA TELA " Compare "
 
                     }
                 });
-
-                // Toast.makeText(CestaActivity.this, "Bebida adicionada na cesta com sucesso", Toast.LENGTH_SHORT).show();
-
-                // PEGAR A BEBIDA SELECIONADA, COLOCAR NA CESTA
-                // PRRENCHER A RECLYCLE VIEW DA CESTA NA TELA " Compare "
-                janelaEscolha.create().show();
             }
+            @Override
+            public void onFailure(Call<List<Cesta>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Problema de acesso", Toast.LENGTH_LONG).show();
+            }//fim do onFailure
         });
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
