@@ -140,6 +140,9 @@ public class CadastroBebidas extends AppCompatActivity {
                 //String estabelecimento = txtEstabelecimento.getText().toString();
 
                 Double preco = Double.parseDouble(txtPreco.getText().toString());
+                txtFabricante.setText("");
+                txtMililitros.setText("");
+                txtPreco.setText("");
                 dialog = new ProgressDialog(CadastroBebidas.this);
                 dialog.setMessage("Carregando...");
                 dialog.setCancelable(false);

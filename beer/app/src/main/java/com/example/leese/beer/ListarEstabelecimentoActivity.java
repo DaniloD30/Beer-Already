@@ -83,16 +83,32 @@ public class ListarEstabelecimentoActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 //excluir o produto
-                                boolean excluiu = dao.excluir(estabelecimentoSelecionado.getId());
+                                //boolean excluiu = dao.excluir(estabelecimentoSelecionado.getId());
 
-                                dialog.cancel();
+                                final ProgressDialog dialog1 = new ProgressDialog(ListarEstabelecimentoActivity.this);
+                                dialog1.setMessage("Carregando...");
+                                dialog1.setCancelable(false);
+                                dialog1.show();
+                                RetrofitService service1 = ServiceGenerator
+                                        .createService(RetrofitService.class);
+                                Call<Void> call2 = service1.excluirEstabelecimento(estabelecimentoSelecionado.getId());
+                                Log.d("listafinal", "id selecionado " + estabelecimentoSelecionado.getId());
+                                call2.enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        if (dialog1.isShowing())
+                                            dialog1.dismiss();
+                                        Log.d("listafinal", "to " + response.body().toString());
+                                        Toast.makeText(getBaseContext(), "Estabelecimento removido com sucesso", Toast.LENGTH_SHORT).show();
+                                    }
 
-                                if (excluiu) {
-                                    adapterListaEstabelecimento.removerBebida(position);
-                                    Toast.makeText(ListarEstabelecimentoActivity.this, "Bebida excluida com sucessso", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(ListarEstabelecimentoActivity.this, "Erro ao excluir produto", Toast.LENGTH_SHORT).show();
-                                }
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        if (dialog1.isShowing())
+                                            dialog1.dismiss();
+                                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         });
 
@@ -136,8 +152,43 @@ public class ListarEstabelecimentoActivity extends AppCompatActivity {
 
     //executa o evento de click do botão atualizar
     public void eventAtualizar(View view){
-        this.adapterListaEstabelecimento.atualizar(dao.retornarTodos());
-    }
+        //executa o evento de click do botão atualizar
+
+            dialog = new ProgressDialog(ListarEstabelecimentoActivity.this);
+            dialog.setMessage("Carregando...");
+            dialog.setCancelable(false);
+            dialog.show();
+            RetrofitService service = ServiceGenerator
+                    .createService(RetrofitService.class);
+
+            Call<List<Estabelecimento>> call = service.getAll();
+            //fazer a busca dos dados no banco de dados
+
+
+            // bebidaList = new ArrayList<>();
+            //this.bebidaList = dao.retornarTodos();
+
+
+
+            call.enqueue(new Callback<List<Estabelecimento>>() {
+                @Override
+                public void onResponse(Call<List<Estabelecimento>> call, Response<List<Estabelecimento>> response) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    final List<Estabelecimento> estabelecimentoList;
+                    estabelecimentoList = response.body();
+                    adapterListaEstabelecimento.atualizar(estabelecimentoList);
+                }
+
+                @Override
+                public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
 
 /*
 

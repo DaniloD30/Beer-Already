@@ -73,6 +73,8 @@ public class CadastroEstabelecimento extends AppCompatActivity {
                 //pegando os valores
                 String nome = txtNome.getText().toString();
                 String endereco =  txtEndereco.getText().toString();
+                txtNome.setText("");
+                txtEndereco.setText("");
 
                 dialog = new ProgressDialog(CadastroEstabelecimento.this);
                 dialog.setMessage("Carregando...");

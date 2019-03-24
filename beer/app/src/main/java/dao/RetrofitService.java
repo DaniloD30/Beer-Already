@@ -49,6 +49,9 @@ public interface RetrofitService {
     @PUT("contato/{id}")
     Call<Estabelecimento> alterarContato(@Path("id") int id, @Body Estabelecimento contato);
 
-    @DELETE("contato/{id}")
-    Call<Void> excluirContato(@Path("id") int id);
+    @DELETE("estabelecimento/{id}/")
+    Call<Void> excluirEstabelecimento(@Path("id") int id);
+
+    @DELETE("bebidas/{id}/")
+    Call<Void> excluirBebida(@Path("id") int id);
 }

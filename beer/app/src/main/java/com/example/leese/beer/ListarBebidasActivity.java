@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -87,16 +88,30 @@ public class ListarBebidasActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 //excluir o produto
-                                boolean excluiu = dao.excluir(bebidaSelecionada.getId());
+                                final ProgressDialog dialog1 = new ProgressDialog(ListarBebidasActivity.this);
+                                dialog1.setMessage("Carregando...");
+                                dialog1.setCancelable(false);
+                                dialog1.show();
+                                RetrofitService service1 = ServiceGenerator
+                                        .createService(RetrofitService.class);
+                                Call<Void> call2 = service1.excluirBebida(bebidaSelecionada.getId());
+                                Log.d("listafinal", "id selecionado " + bebidaSelecionada.getId());
+                                call2.enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        if (dialog1.isShowing())
+                                            dialog1.dismiss();
+                                        Log.d("listafinal", "to " + response.body().toString());
+                                        Toast.makeText(getBaseContext(), "Bebida removido com sucesso", Toast.LENGTH_SHORT).show();
+                                    }
 
-                                dialog.cancel();
-
-                                if(excluiu) {
-                                    adapterListaBebidas.removerBebida(position);
-                                    Toast.makeText(ListarBebidasActivity.this, "Bebida excluida com sucessso", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(ListarBebidasActivity.this, "Erro ao excluir produto", Toast.LENGTH_SHORT).show();
-                                }
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        if (dialog1.isShowing())
+                                            dialog1.dismiss();
+                                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
                             }
                         });
@@ -153,6 +168,40 @@ public class ListarBebidasActivity extends AppCompatActivity {
 
     //executa o evento de click do botão atualizar
     public void eventAtualizar(View view){
-        this.adapterListaBebidas.atualizar(dao.retornarTodos());
+        dialog = new ProgressDialog(ListarBebidasActivity.this);
+        dialog.setMessage("Carregando...");
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitService service = ServiceGenerator
+                .createService(RetrofitService.class);
+
+        Call<List<Bebida>> call = service.getAllBebidas();
+        //fazer a busca dos dados no banco de dados
+
+
+        // bebidaList = new ArrayList<>();
+        //this.bebidaList = dao.retornarTodos();
+
+
+
+        call.enqueue(new Callback<List<Bebida>>() {
+            @Override
+            public void onResponse(Call<List<Bebida>> call, Response<List<Bebida>> response) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                final List<Bebida> bebidaList;
+                bebidaList = response.body();
+                adapterListaBebidas.atualizar(bebidaList);
+            }
+
+            @Override
+            public void onFailure(Call<List<Bebida>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 }

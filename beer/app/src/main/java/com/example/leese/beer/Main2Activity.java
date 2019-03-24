@@ -197,6 +197,39 @@ public class Main2Activity extends AppCompatActivity
 
     //executa o evento de click do botão atualizar
     public void eventAtualizar(View view){
-        this.adapterCestas.atualizar(daoCesta.retornarTodos());
+        dialog = new ProgressDialog(Main2Activity.this);
+        dialog.setMessage("Carregando...");
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitService service = ServiceGenerator
+                .createService(RetrofitService.class);
+
+        Call<List<Cesta>> call = service.getAllCestas();
+        //fazer a busca dos dados no banco de dados
+
+
+        // bebidaList = new ArrayList<>();
+        //this.bebidaList = dao.retornarTodos();
+
+
+
+        call.enqueue(new Callback<List<Cesta>>() {
+            @Override
+            public void onResponse(Call<List<Cesta>> call, Response<List<Cesta>> response) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                final List<Cesta> estabelecimentoList;
+                estabelecimentoList = response.body();
+                adapterCestas.atualizar(estabelecimentoList);
+                Toast.makeText(getBaseContext(), "Lista atualizada", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<List<Cesta>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
