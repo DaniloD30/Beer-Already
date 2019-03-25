@@ -1,15 +1,22 @@
 package com.example.leese.beer;
 
+import android.app.ProgressDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import dao.BebidaDao;
 import dao.ConexaoSQLite;
+import dao.RetrofitService;
+import dao.ServiceGenerator;
 import model.Bebida;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditarActivity extends AppCompatActivity {
 
@@ -21,6 +28,7 @@ public class EditarActivity extends AppCompatActivity {
     private EditText edtPrecoBebida;
     private EditText edtMililitros;
     private Bebida bebida;
+    ProgressDialog dialog;
 
 
 
@@ -70,27 +78,28 @@ public class EditarActivity extends AppCompatActivity {
                 // fabricante, String estabelecimento, Double preco, double ml)
                 Bebida b = new Bebida(bebida.getId(), fabricante, estabelecimento, preco, mililitros);
 
-                //salvando os dados
-                BebidaDao dao = new BebidaDao(conexaoSQLite);
-                boolean sucesso = dao.update(b);
-                //boolean sucesso = dao.salvar(fabricante, mililitros, estabelecimento, preco);
-                if(sucesso) {
-                    //limpa os campos
-                    txtEstabelecimento.setText("");
-                    txtFabricante.setText("");
-                    txtMililitros.setText("");
-                    txtPreco.setText("");
+                dialog = new ProgressDialog(EditarActivity.this);
+                dialog.setMessage("Carregando...");
+                dialog.setCancelable(false);
+                dialog.show();
+                RetrofitService service1 = ServiceGenerator
+                        .createService(RetrofitService.class);
+                Call<Void> call = service1.alterarBebida(b.getId(), b);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                        Toast.makeText(getBaseContext(), "Bebida alterada com sucesso", Toast.LENGTH_SHORT).show();
+                    }
 
-                    Snackbar.make(view, "Atualizou!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-
-                    //indViewById(R.id.includemain).setVisibility(View.VISIBLE);
-
-                }else{
-                    Snackbar.make(view, "Erro ao atualizar, consulte os logs!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    //Podemos usar o Toast
-                }
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }

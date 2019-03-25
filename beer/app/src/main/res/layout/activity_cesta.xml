@@ -31,12 +31,12 @@
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:text="Cadastrar bebida" />
 
     <Button
         android:layout_width="match_parent"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:text="Atualizar lista"
         android:onClick="eventAtualizar"/>
 

@@ -43,13 +43,12 @@ public class CestaActivity extends AppCompatActivity {
     private ItemDao daoItem = new ItemDao(conexaoSQLite);
 
     private List<Bebida> bebidasCesta;
-    private  List<Cesta> listaCesta;
+    private List<Cesta> listaCesta;
     private String nomeCesta;
     private Bebida bebidaSelecionada;
     private RetrofitService service;
     ProgressDialog dialog;
     Cesta cesta = new Cesta();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class CestaActivity extends AppCompatActivity {
         dialog.show();
         RetrofitService service = ServiceGenerator
                 .createService(RetrofitService.class);
-
         Call<List<Bebida>> call = service.getAllBebidas();
         call.enqueue(new Callback<List<Bebida>>() {
             @Override
@@ -74,15 +72,10 @@ public class CestaActivity extends AppCompatActivity {
                 bebidasCesta = new ArrayList<>();
                 //bebidaList = new ArrayList<>();
                 //this.bebidaList = dao.retornarTodos();
-
                 lsvBebidas = (ListView) findViewById(R.id.lsvBebidas);
                 lsvBebidas = (ListView) findViewById(R.id.lsvBebidas);
-
                 adapterListaBebidas = new AdapterListaBebidas(CestaActivity.this, bebidaList);
-
                 lsvBebidas.setAdapter(adapterListaBebidas);
-
-
                 lsvBebidas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -99,13 +92,14 @@ public class CestaActivity extends AppCompatActivity {
                     }
                 });
             }
-                @Override
-                public void onFailure(Call<List<Bebida>> call, Throwable t) {
-                    if (dialog.isShowing())
-                        dialog.dismiss();
-                    Toast.makeText(getBaseContext(), "Problema de acesso", Toast.LENGTH_LONG).show();
-                }//fim do onFailure
-            });
+
+            @Override
+            public void onFailure(Call<List<Bebida>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Problema de acesso", Toast.LENGTH_LONG).show();
+            }//fim do onFailure
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +108,6 @@ public class CestaActivity extends AppCompatActivity {
                 EditText txtNome = findViewById(R.id.edtNome);
                 nomeCesta = txtNome.getText().toString();
                 // SE O NOME DA CESTA FOR REPETIDO, VAI TRAZER AS BEBIDAS SELECIONDAS DA PRIMEIRA CESTA
-
                 cesta.setNome(nomeCesta);
                 cesta.addBebida(bebidasCesta);
                 dialog = new ProgressDialog(CestaActivity.this);
@@ -141,7 +134,7 @@ public class CestaActivity extends AppCompatActivity {
                     }
                 });
 
-               // daoCesta.salvar(nomeCesta);
+                // daoCesta.salvar(nomeCesta);
                 //cesta = daoCesta.retornarTodosByName(nomeCesta);
 
                 RetrofitService service1 = ServiceGenerator
@@ -160,42 +153,30 @@ public class CestaActivity extends AppCompatActivity {
 
                         final List<Cesta> cestaList;
                         cestaList = response.body();
-                        for (Cesta c:cestaList
+                        List<Item> listaItem = new ArrayList<>();
+                        listaItem = getItensCesta(cestaList);
+                        RetrofitService service2 = ServiceGenerator
+                                .createService(RetrofitService.class);
+                        for (Item i: listaItem
                              ) {
-                            Log.d("Compare","id antes:  " + cesta.getId());
-                            if(c.getNome().equalsIgnoreCase(cesta.getNome())) {
-                                cesta.setId(c.getId());
-                                Log.d("Compare","id:  " + cesta.getId());
-                                for (Bebida b: bebidasCesta
-                                ) {
-
-                                    Log.d("Compare","id2:  " + cesta.getId());
-                                    Item item = new Item(cesta.getId(), b.getId());
-                                    RetrofitService service2 = ServiceGenerator
-                                            .createService(RetrofitService.class);
-                                    final Call<Void> call2 = service2.addItem(item);
-                                    call2.enqueue(new Callback<Void>() {
-
-                                        @Override
-                                        public void onResponse(Call<Void> call, Response<Void> response) {
-
-                                            //Log.d("CestaActivity","ID CESTA:  " + cesta.getId());
-                                            //oolean sucesso = daoItem.salvar(cesta.getId(), b.getId()); // idcesta , idbebi
-                                            Toast.makeText(getBaseContext(), "Item inserido com sucesso", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<Void> call, Throwable t) {
-                                            if (dialog.isShowing())
-                                                dialog.dismiss();
-                                            Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-
-
+                            final Call<Void> call2 = service2.addItem(i);
+                            call2.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                    if (dialog.isShowing())
+                                        dialog.dismiss();
+                                    //Log.d("CestaActivity","ID CESTA:  " + cesta.getId());
+                                    //oolean sucesso = daoItem.salvar(cesta.getId(), b.getId()); // idcesta , idbebi
+                                    Toast.makeText(getBaseContext(), "Item inserido com sucesso", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable t) {
+                                    if (dialog.isShowing())
+                                        dialog.dismiss();
+                                    Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
                     @Override
@@ -206,19 +187,32 @@ public class CestaActivity extends AppCompatActivity {
                     }
 
                 });
-
-
-
-
                 listaCesta.add(cesta);
+                //Toast.makeText(CestaActivity.this, "Cesta criada com sucesso", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(CestaActivity.this, "Cesta criada com sucesso", Toast.LENGTH_SHORT).show();
-
+            }
+            public List<Item> getItensCesta(List<Cesta> ces) {
+                List<Item> lista = new ArrayList<>();
+                for (Cesta c : ces
+                ) {
+                    //  Log.d("Compare","id antes:  " + cesta.getId());
+                    if (c.getNome().equalsIgnoreCase(cesta.getNome())) {
+                        cesta.setId(c.getId());
+                        //    Log.d("Compare","id:  " + cesta.getId());
+                        for (Bebida b : bebidasCesta
+                        ) {
+                            //  Log.d("Compare","id2:  " + cesta.getId());
+                            Item item = new Item(cesta.getId(), b.getId());
+                            lista.add(item);
+                        }
+                    }
+                }
+                return lista;
             }
         });
 
         //cadastro bebidas
-        Button btnSalvar = (Button)findViewById(R.id.btnSalvar);
+        Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,14 +220,17 @@ public class CestaActivity extends AppCompatActivity {
                 startActivity(it);
             }
         });
-    }
 
-    public List<Cesta> getListCesta(){
-        return listaCesta;
+        /*
+        public List<Cesta> getListCesta() {
+            return listaCesta;
+        }
+           */
     }
-
     //executa o evento de click do botão atualizar
-    public void eventAtualizar(View view){
+    public void eventAtualizar (View view){
         this.adapterListaBebidas.atualizar(dao.retornarTodos());
     }
 }
+
+

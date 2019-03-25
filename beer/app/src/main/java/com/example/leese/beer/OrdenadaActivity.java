@@ -58,7 +58,7 @@ public class OrdenadaActivity extends AppCompatActivity {
         dialog.setMessage("Carregando...");
         dialog.setCancelable(false);
         dialog.show();
-        Bebida bebida = new Bebida();
+        final Bebida bebida = new Bebida();
         RetrofitService service = ServiceGenerator
                 .createService(RetrofitService.class);
         final Call<List<Item>> call = service.getAllItens();
@@ -66,8 +66,7 @@ public class OrdenadaActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                if (dialog.isShowing())
-                    dialog.dismiss();
+
                 final List<Item> listaItem;
                 final List<Integer> listaItensCesta = new ArrayList<>();
                 listaItem = response.body();
@@ -119,9 +118,11 @@ public class OrdenadaActivity extends AppCompatActivity {
                             }
 
                         }
+                        if (dialog.isShowing())
+                            dialog.dismiss();
                         // this.bebidaList = dao.retornarBebidaByIdCesta(cesta.getId());
                         Collections.sort(bebidaList);
-                        Toast.makeText(getBaseContext(), "Bebida inserido com sucesso", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(getBaseContext(), "Bebida inserido com sucesso", Toast.LENGTH_SHORT).show();
                         lsvBebidas = (ListView) findViewById(R.id.lsvBebidas);
 
                         adapterListaOrdenada = new AdapterListaOrdenada(OrdenadaActivity.this, bebidaList);
@@ -146,16 +147,30 @@ public class OrdenadaActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int id) {
                                         //excluir o produto
-                                        boolean excluiu = dao.excluir(bebidaSelecionada.getId());
+                                        final ProgressDialog dialog1 = new ProgressDialog(OrdenadaActivity.this);
+                                        dialog1.setMessage("Carregando...");
+                                        dialog1.setCancelable(false);
+                                        dialog1.show();
+                                        RetrofitService service1 = ServiceGenerator
+                                                .createService(RetrofitService.class);
+                                        Call<Void> call2 = service1.excluirItem(bebidaSelecionada.getId());
+                                        Log.d("listafinal", "id selecionado " + bebidaSelecionada.getId());
+                                        call2.enqueue(new Callback<Void>() {
+                                            @Override
+                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                if (dialog1.isShowing())
+                                                    dialog1.dismiss();
+                                                Log.d("listafinal", "to " + response.body().toString());
+                                                Toast.makeText(getBaseContext(), "Bebida removida com sucesso", Toast.LENGTH_SHORT).show();
+                                            }
 
-                                        dialog.cancel();
-
-                                        if (excluiu) {
-                                            adapterListaOrdenada.removerBebida(position);
-                                            Toast.makeText(OrdenadaActivity.this, "Bebida excluida com sucessso", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(OrdenadaActivity.this, "Erro ao excluir produto", Toast.LENGTH_SHORT).show();
-                                        }
+                                            @Override
+                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                if (dialog1.isShowing())
+                                                    dialog1.dismiss();
+                                                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
 
                                     }
                                 });

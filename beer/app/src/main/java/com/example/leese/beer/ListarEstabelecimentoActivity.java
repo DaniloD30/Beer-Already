@@ -92,13 +92,13 @@ public class ListarEstabelecimentoActivity extends AppCompatActivity {
                                 RetrofitService service1 = ServiceGenerator
                                         .createService(RetrofitService.class);
                                 Call<Void> call2 = service1.excluirEstabelecimento(estabelecimentoSelecionado.getId());
-                                Log.d("listafinal", "id selecionado " + estabelecimentoSelecionado.getId());
+                             //   Log.d("listafinal", "id selecionado " + estabelecimentoSelecionado.getId());
                                 call2.enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
                                         if (dialog1.isShowing())
                                             dialog1.dismiss();
-                                        Log.d("listafinal", "to " + response.body().toString());
+                                      //  Log.d("listafinal", "to " + response.body().toString());
                                         Toast.makeText(getBaseContext(), "Estabelecimento removido com sucesso", Toast.LENGTH_SHORT).show();
                                     }
 

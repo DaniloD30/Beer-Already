@@ -67,7 +67,7 @@ public class Compare extends AppCompatActivity {
                     dialog.dismiss();
                 final List<Cesta> cestaList;
                 cestaList = response.body();
-                Log.d("Compare"," " + cestaList.get(0));
+               // Log.d("Compare"," " + cestaList.get(0));
                 lsvCestas = (ListView) findViewById(R.id.lsvCestas);
 
                 adapterCestas = new AdapterCestas(Compare.this, cestaList);
@@ -80,7 +80,7 @@ public class Compare extends AppCompatActivity {
                         final Cesta cestaSelecionada = (Cesta) adapterCestas.getItem(position);
                         Bundle bundleDadosCesta = new Bundle();
                         // fabricante, String estabelecimento, Double preco, double ml
-                        Log.d("CestaActivity", "ID CESTA COMPARE:  " + cestaSelecionada.getId());
+                      //  Log.d("CestaActivity", "ID CESTA COMPARE:  " + cestaSelecionada.getId());
                         bundleDadosCesta.putInt("id_cesta", cestaSelecionada.getId());
                         bundleDadosCesta.putString("nome", cestaSelecionada.getNome());
 
