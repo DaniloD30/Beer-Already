@@ -71,13 +71,9 @@ public class OrdenadaActivity extends AppCompatActivity {
                 final List<Integer> listaItensCesta = new ArrayList<>();
                 listaItem = response.body();
                 bebidaList = new ArrayList<>();
-
-
                 // dao = new ItemDao(conexaoSQLite);
                 //daoBebida = new BebidaDao(conexaoSQLite);
-
                 Bundle bundleDadosBebida = getIntent().getExtras();
-
                 cesta = new Cesta();
                 cesta.setId(bundleDadosBebida.getInt("id_cesta"));
                 cesta.setNome(bundleDadosBebida.getString("nome"));
@@ -89,18 +85,12 @@ public class OrdenadaActivity extends AppCompatActivity {
                         listaItensCesta.add(i.getId_bebida());
                     }
                 }
-
                 RetrofitService service1 = ServiceGenerator
                         .createService(RetrofitService.class);
-
                 Call<List<Bebida>> call1 = service1.getAllBebidas();
                 //fazer a busca dos dados no banco de dados
-
-
                 // bebidaList = new ArrayList<>();
                 //this.bebidaList = dao.retornarTodos();
-
-
                 call1.enqueue(new Callback<List<Bebida>>() {
                     @Override
                     public void onResponse(Call<List<Bebida>> call, Response<List<Bebida>> response) {
@@ -122,7 +112,7 @@ public class OrdenadaActivity extends AppCompatActivity {
                             dialog.dismiss();
                         // this.bebidaList = dao.retornarBebidaByIdCesta(cesta.getId());
                         Collections.sort(bebidaList);
-                       // Toast.makeText(getBaseContext(), "Bebida inserido com sucesso", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getBaseContext(), "Bebida inserido com sucesso", Toast.LENGTH_SHORT).show();
                         lsvBebidas = (ListView) findViewById(R.id.lsvBebidas);
 
                         adapterListaOrdenada = new AdapterListaOrdenada(OrdenadaActivity.this, bebidaList);
@@ -147,20 +137,23 @@ public class OrdenadaActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int id) {
                                         //excluir o produto
+                                        Log.d("listafinal", "id selecionado " + listaItem.get(0).getId());
                                         final ProgressDialog dialog1 = new ProgressDialog(OrdenadaActivity.this);
                                         dialog1.setMessage("Carregando...");
                                         dialog1.setCancelable(false);
                                         dialog1.show();
                                         RetrofitService service1 = ServiceGenerator
                                                 .createService(RetrofitService.class);
-                                        Call<Void> call2 = service1.excluirItem(bebidaSelecionada.getId());
-                                        Log.d("listafinal", "id selecionado " + bebidaSelecionada.getId());
+                                        int i = getItensCesta(listaItem, cesta.getId(), bebidaSelecionada.getId());
+                                        Log.d("listafinal", "id metodo " + i);
+                                        Call<Void> call2 = service1.excluirItem(i);
+                                       // Log.d("listafinal", "id selecionado " + i.getId());
                                         call2.enqueue(new Callback<Void>() {
                                             @Override
                                             public void onResponse(Call<Void> call, Response<Void> response) {
                                                 if (dialog1.isShowing())
                                                     dialog1.dismiss();
-                                                Log.d("listafinal", "to " + response.body().toString());
+                                                //Log.d("listafinal", "to " + response.body().toString());
                                                 Toast.makeText(getBaseContext(), "Bebida removida com sucesso", Toast.LENGTH_SHORT).show();
                                             }
 
@@ -173,6 +166,8 @@ public class OrdenadaActivity extends AppCompatActivity {
                                         });
 
                                     }
+
+
                                 });
 
                                 janelaEscolha.setPositiveButton("Editar", new DialogInterface.OnClickListener() {
@@ -234,8 +229,22 @@ public class OrdenadaActivity extends AppCompatActivity {
 
 
     }
+
     //executa o evento de click do botão atualizar
-    public void eventAtualizar (View view){
+    public void eventAtualizar(View view) {
         this.adapterListaOrdenada.atualizar(dao.retornarBebidaByIdCesta(cesta.getId()));
+    }
+
+    public int getItensCesta(List<Item> list, int cestaId, int bebidaId) {
+        for (Item i : list
+        ) {
+            if (i.getId_cesta() == cestaId)
+                if (i.getId_bebida() == bebidaId) {
+
+                    return i.getId();
+
+                }
+        }
+        return 0;
     }
 }

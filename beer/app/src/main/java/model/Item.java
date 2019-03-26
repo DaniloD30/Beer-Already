@@ -2,12 +2,21 @@ package model;
 
 public class Item {
 
+    private int id;
     private int id_cesta;
     private int id_bebida;
 
     public Item(int id_cesta, int id_bebida) {
         this.id_cesta = id_cesta;
         this.id_bebida = id_bebida;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId_cesta() {
