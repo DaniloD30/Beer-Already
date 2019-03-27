@@ -147,7 +147,7 @@ public class OrdenadaActivity extends AppCompatActivity {
                                         int i = getItensCesta(listaItem, cesta.getId(), bebidaSelecionada.getId());
                                         Log.d("listafinal", "id metodo " + i);
                                         Call<Void> call2 = service1.excluirItem(i);
-                                       // Log.d("listafinal", "id selecionado " + i.getId());
+                                        // Log.d("listafinal", "id selecionado " + i.getId());
                                         call2.enqueue(new Callback<Void>() {
                                             @Override
                                             public void onResponse(Call<Void> call, Response<Void> response) {

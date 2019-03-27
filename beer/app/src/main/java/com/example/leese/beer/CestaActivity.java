@@ -110,73 +110,81 @@ public class CestaActivity extends AppCompatActivity {
                 // SE O NOME DA CESTA FOR REPETIDO, VAI TRAZER AS BEBIDAS SELECIONDAS DA PRIMEIRA CESTA
                 cesta.setNome(nomeCesta);
                 cesta.addBebida(bebidasCesta);
-                dialog = new ProgressDialog(CestaActivity.this);
-                dialog.setMessage("Carregando...");
-                dialog.setCancelable(false);
-                dialog.show();
-                final RetrofitService service = ServiceGenerator
-                        .createService(RetrofitService.class);
+                if(cesta.getListaCesta().isEmpty()){
+                    Toast.makeText(getBaseContext(), "Lista vazia, por favor insira uma ou mais bebidas na cesta", Toast.LENGTH_SHORT).show();
+                }
+                if(cesta.getNome().isEmpty()){
+                    Toast.makeText(getBaseContext(), "Digite o nome da cesta", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    dialog = new ProgressDialog(CestaActivity.this);
+                    dialog.setMessage("Carregando...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    final RetrofitService service = ServiceGenerator
+                            .createService(RetrofitService.class);
 
-                final Call<Void> call = service.addCestas(cesta);
-                call.enqueue(new Callback<Void>() {
+                    final Call<Void> call = service.addCestas(cesta);
+                    call.enqueue(new Callback<Void>() {
 
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
-                        Toast.makeText(getBaseContext(), "Cesta criada com sucesso", Toast.LENGTH_SHORT).show();
-                        // RetrofitService service1 = ServiceGenerator
-                        //  .createService(RetrofitService.class);
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (dialog.isShowing())
+                                dialog.dismiss();
+                            Toast.makeText(getBaseContext(), "Cesta criada com sucesso", Toast.LENGTH_SHORT).show();
+                            // RetrofitService service1 = ServiceGenerator
+                            //  .createService(RetrofitService.class);
 
-                        Call<List<Cesta>> call1 = service.getAllCestas();
+                            Call<List<Cesta>> call1 = service.getAllCestas();
 
-                        //Preencher a list view com as cestas
-                        // cestaList = new ArrayList<>();
-                        //this.cestaList = daoCesta.retornarTodos();
-                        //Log.d("Compare","Tamanho na lista de cestas " + this.cestaList.size());
+                            //Preencher a list view com as cestas
+                            // cestaList = new ArrayList<>();
+                            //this.cestaList = daoCesta.retornarTodos();
+                            //Log.d("Compare","Tamanho na lista de cestas " + this.cestaList.size());
 
-                        call1.enqueue(new Callback<List<Cesta>>() {
-                            @Override
-                            public void onResponse(Call<List<Cesta>> calll, Response<List<Cesta>> response) {
+                            call1.enqueue(new Callback<List<Cesta>>() {
+                                @Override
+                                public void onResponse(Call<List<Cesta>> calll, Response<List<Cesta>> response) {
 
-                                final List<Cesta> cestaList;
-                                cestaList = response.body();
-                                List<Item> listaItem = new ArrayList<>();
-                                listaItem = getItensCesta(cestaList);
-                                // RetrofitService service2 = ServiceGenerator
-                                // .createService(RetrofitService.class);
-                                for (Item i : listaItem
-                                ) {
-                                    final Call<Void> call2 = service.addItem(i);
-                                    call2.enqueue(new Callback<Void>() {
-                                        @Override
-                                        public void onResponse(Call<Void> call, Response<Void> response) {
-                                            if (dialog.isShowing())
-                                                dialog.dismiss();
-                                            //Log.d("CestaActivity","ID CESTA:  " + cesta.getId());
-                                            //oolean sucesso = daoItem.salvar(cesta.getId(), b.getId()); // idcesta , idbebi
-                                            Toast.makeText(getBaseContext(), "Item inserido com sucesso", Toast.LENGTH_SHORT).show();
-                                        }
+                                    final List<Cesta> cestaList;
+                                    cestaList = response.body();
+                                    List<Item> listaItem = new ArrayList<>();
+                                    listaItem = getItensCesta(cestaList);
+                                    // RetrofitService service2 = ServiceGenerator
+                                    // .createService(RetrofitService.class);
+                                    for (Item i : listaItem
+                                    ) {
+                                        final Call<Void> call2 = service.addItem(i);
+                                        call2.enqueue(new Callback<Void>() {
+                                            @Override
+                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                if (dialog.isShowing())
+                                                    dialog.dismiss();
+                                                //Log.d("CestaActivity","ID CESTA:  " + cesta.getId());
+                                                //oolean sucesso = daoItem.salvar(cesta.getId(), b.getId()); // idcesta , idbebi
+                                                Toast.makeText(getBaseContext(), "Item inserido com sucesso", Toast.LENGTH_SHORT).show();
+                                            }
 
-                                        @Override
-                                        public void onFailure(Call<Void> call, Throwable t) {
-                                            if (dialog.isShowing())
-                                                dialog.dismiss();
-                                            Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                            @Override
+                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                if (dialog.isShowing())
+                                                    dialog.dismiss();
+                                                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<List<Cesta>> calll, Throwable t) {
-                                if (dialog.isShowing())
-                                    dialog.dismiss();
-                                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                            }
+                                @Override
+                                public void onFailure(Call<List<Cesta>> calll, Throwable t) {
+                                    if (dialog.isShowing())
+                                        dialog.dismiss();
+                                    Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                                }
 
-                        });
-                    }
+                            });
+                        }
+
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
@@ -185,63 +193,9 @@ public class CestaActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-                // daoCesta.salvar(nomeCesta);
-                //cesta = daoCesta.retornarTodosByName(nomeCesta);
-
-              /*  RetrofitService service1 = ServiceGenerator
-                        .createService(RetrofitService.class);
-
-                Call<List<Cesta>> call1 = service1.getAllCestas();*/
-
-                //Preencher a list view com as cestas
-                // cestaList = new ArrayList<>();
-                //this.cestaList = daoCesta.retornarTodos();
-                //Log.d("Compare","Tamanho na lista de cestas " + this.cestaList.size());
-
-               /* call1.enqueue(new Callback<List<Cesta>>() {
-                    @Override
-                    public void onResponse(Call<List<Cesta>> calll, Response<List<Cesta>> response) {
-
-                        final List<Cesta> cestaList;
-                        cestaList = response.body();
-                        List<Item> listaItem = new ArrayList<>();
-                        listaItem = getItensCesta(cestaList);
-                        RetrofitService service2 = ServiceGenerator
-                                .createService(RetrofitService.class);
-                        for (Item i: listaItem
-                             ) {
-                            final Call<Void> call2 = service2.addItem(i);
-                            call2.enqueue(new Callback<Void>() {
-                                @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) {
-                                    if (dialog.isShowing())
-                                        dialog.dismiss();
-                                    //Log.d("CestaActivity","ID CESTA:  " + cesta.getId());
-                                    //oolean sucesso = daoItem.salvar(cesta.getId(), b.getId()); // idcesta , idbebi
-                                    Toast.makeText(getBaseContext(), "Item inserido com sucesso", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onFailure(Call<Void> call, Throwable t) {
-                                    if (dialog.isShowing())
-                                        dialog.dismiss();
-                                    Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<List<Cesta>> calll, Throwable t) {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
-                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                    }
-
-                });*/
+                }
                 listaCesta.add(cesta);
                 //Toast.makeText(CestaActivity.this, "Cesta criada com sucesso", Toast.LENGTH_SHORT).show();
-
             }
 
             public List<Item> getItensCesta(List<Cesta> ces) {
@@ -283,7 +237,39 @@ public class CestaActivity extends AppCompatActivity {
 
     //executa o evento de click do botão atualizar
     public void eventAtualizar(View view) {
-        this.adapterListaBebidas.atualizar(dao.retornarTodos());
+        dialog = new ProgressDialog(CestaActivity.this);
+        dialog.setMessage("Carregando...");
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitService service = ServiceGenerator
+                .createService(RetrofitService.class);
+
+        Call<List<Bebida>> call = service.getAllBebidas();
+        //fazer a busca dos dados no banco de dados
+
+
+        // bebidaList = new ArrayList<>();
+        //this.bebidaList = dao.retornarTodos();
+
+
+
+        call.enqueue(new Callback<List<Bebida>>() {
+            @Override
+            public void onResponse(Call<List<Bebida>> call, Response<List<Bebida>> response) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                final List<Bebida> bebidaList;
+                bebidaList = response.body();
+                adapterListaBebidas.atualizar(bebidaList);
+            }
+
+            @Override
+            public void onFailure(Call<List<Bebida>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 

@@ -76,51 +76,38 @@ public class CadastroEstabelecimento extends AppCompatActivity {
                 txtNome.setText("");
                 txtEndereco.setText("");
 
-                dialog = new ProgressDialog(CadastroEstabelecimento.this);
-                dialog.setMessage("Carregando...");
-                dialog.setCancelable(false);
-                dialog.show();
+
                 Estabelecimento estabelecimento = new Estabelecimento();
                 estabelecimento.setNome(nome);
                 estabelecimento.setEndereço(endereco);
-
-                RetrofitService service = ServiceGenerator
-                        .createService(RetrofitService.class);
-                final Call<Void> call = service.add(estabelecimento);
-                call.enqueue(new Callback<Void>() {
-
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
-                        Toast.makeText(getBaseContext(), "Estabelecimento inserido com sucesso", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
-                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                /*
-                //salvando os dados
-                EstabelecimentoDao dao = new EstabelecimentoDao(conexaoSQLite);
-                boolean sucesso = dao.salvar(nome, endereco);
-                if(sucesso) {
-                    //limpa os campos
-                    txtNome.setText("");
-                    txtEndereco.setText("");
-                    Snackbar.make(view, "Salvou!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-
-                    //findViewById(R.id.includemain).setVisibility(View.VISIBLE);
-
-                }else{
-                    Snackbar.make(view, "Erro ao salvar, consulte os logs!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                if(estabelecimento.getNome().isEmpty() || estabelecimento.getEndereço().isEmpty()){
+                    Toast.makeText(getBaseContext(), "Preencha todos os campos do estabelecimento", Toast.LENGTH_SHORT).show();
                 }
-                */
+                else {
+                    dialog = new ProgressDialog(CadastroEstabelecimento.this);
+                    dialog.setMessage("Carregando...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                    RetrofitService service = ServiceGenerator
+                            .createService(RetrofitService.class);
+                    final Call<Void> call = service.add(estabelecimento);
+                    call.enqueue(new Callback<Void>() {
+
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (dialog.isShowing())
+                                dialog.dismiss();
+                            Toast.makeText(getBaseContext(), "Estabelecimento inserido com sucesso", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            if (dialog.isShowing())
+                                dialog.dismiss();
+                            Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
      }

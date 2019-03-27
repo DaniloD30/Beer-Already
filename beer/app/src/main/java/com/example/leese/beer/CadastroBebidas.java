@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -40,7 +41,7 @@ public class CadastroBebidas extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_bebidas);
 
-        final ConexaoSQLite conexaoSQLite = ConexaoSQLite.getInstance(this);
+        //final ConexaoSQLite conexaoSQLite = ConexaoSQLite.getInstance(this);
         dialog = new ProgressDialog(CadastroBebidas.this);
         dialog.setMessage("Carregando...");
         dialog.setCancelable(false);
@@ -85,6 +86,7 @@ public class CadastroBebidas extends AppCompatActivity {
 
                 });
             }
+
             @Override
             public void onFailure(Call<List<Estabelecimento>> call, Throwable t) {
                 if (dialog.isShowing())
@@ -105,9 +107,9 @@ public class CadastroBebidas extends AppCompatActivity {
                 //this.bebidaList = dao.retornarTodos();
 
                 try {
-                     Intent intent = new Intent(CadastroBebidas.this, ListarBebidasActivity.class);
-                     startActivity(intent);
-                }catch (NullPointerException e) {
+                    Intent intent = new Intent(CadastroBebidas.this, ListarBebidasActivity.class);
+                    startActivity(intent);
+                } catch (NullPointerException e) {
                     Snackbar.make(v, "Lista vazia, por favor cadastra uma bebida!", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -123,14 +125,14 @@ public class CadastroBebidas extends AppCompatActivity {
             }
         });
 
-        Button btnSalvar = (Button)findViewById(R.id.btnSalvar);
+        Button btnSalvar = (Button) findViewById(R.id.btnSalvar);
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 EditText txtFabricante = findViewById(R.id.edtFabricante);
-                EditText txtMililitros =  findViewById(R.id.edtMililitros);
-               // EditText txtEstabelecimento =  findViewById(R.id.edtEstabelecimento);
+                EditText txtMililitros = findViewById(R.id.edtMililitros);
+                // EditText txtEstabelecimento =  findViewById(R.id.edtEstabelecimento);
                 EditText txtPreco = findViewById(R.id.edtPreco);
 
 
@@ -143,16 +145,17 @@ public class CadastroBebidas extends AppCompatActivity {
                 txtFabricante.setText("");
                 txtMililitros.setText("");
                 txtPreco.setText("");
-                dialog = new ProgressDialog(CadastroBebidas.this);
-                dialog.setMessage("Carregando...");
-                dialog.setCancelable(false);
-                dialog.show();
+
                 Bebida bebida = new Bebida();
                 bebida.setFabricante(fabricante);
                 bebida.setMililitros(mililitros);
                 bebida.setPreco(preco);
                 bebida.setEstabelecimento(estabelecimento);
 
+                dialog = new ProgressDialog(CadastroBebidas.this);
+                dialog.setMessage("Carregando...");
+                dialog.setCancelable(false);
+                dialog.show();
                 RetrofitService service = ServiceGenerator
                         .createService(RetrofitService.class);
                 final Call<Void> call = service.addBebida(bebida);
@@ -172,32 +175,12 @@ public class CadastroBebidas extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
                     }
                 });
-                /*
-                //salvando os dados
-                BebidaDao dao = new BebidaDao(conexaoSQLite);
-                boolean sucesso = dao.salvar(fabricante, mililitros, estabelecimento, preco);
-                if(sucesso) {
-                    //limpa os campos
-                   // txtEstabelecimento.setText("");
-                    txtFabricante.setText("");
-                    txtMililitros.setText("");
-                    txtPreco.setText("");
-                    Snackbar.make(view, "Salvou!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
 
-                    //indViewById(R.id.includemain).setVisibility(View.VISIBLE);
 
-                }else{
-                    Snackbar.make(view, "Erro ao salvar, consulte os logs!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    //Podemos usar o Toast
-                }
-                */
             }
         });
 
     }
 
-    // FAZER A AÇÃO DO BOTAÇÃO SALVAR, JUNTAMENTE COM O INSERT NO SQLIGHT
-    // IMPLEMENTAR A AÇÃO DO BOTÃO CANCELAR
+
 }

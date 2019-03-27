@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Veja na lista abaixo o melhor custo benefício. A ordem das bebidas é da mais barata para a mais cara"
-        android:textSize="16dp"
+        android:textSize="20dp"
         android:textStyle="bold|italic"
         />
 
