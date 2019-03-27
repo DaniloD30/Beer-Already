@@ -232,7 +232,83 @@ public class OrdenadaActivity extends AppCompatActivity {
 
     //executa o evento de click do botão atualizar
     public void eventAtualizar(View view) {
-        this.adapterListaOrdenada.atualizar(dao.retornarBebidaByIdCesta(cesta.getId()));
+        dialog = new ProgressDialog(OrdenadaActivity.this);
+        dialog.setMessage("Carregando...");
+        dialog.setCancelable(false);
+        dialog.show();
+        final Bebida bebida = new Bebida();
+        RetrofitService service = ServiceGenerator
+                .createService(RetrofitService.class);
+        final Call<List<Item>> call = service.getAllItens();
+        call.enqueue(new Callback<List<Item>>() {
+
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+
+                final List<Item> listaItem;
+                final List<Integer> listaItensCesta = new ArrayList<>();
+                listaItem = response.body();
+                bebidaList = new ArrayList<>();
+                // dao = new ItemDao(conexaoSQLite);
+                //daoBebida = new BebidaDao(conexaoSQLite);
+                Bundle bundleDadosBebida = getIntent().getExtras();
+                cesta = new Cesta();
+                cesta.setId(bundleDadosBebida.getInt("id_cesta"));
+                cesta.setNome(bundleDadosBebida.getString("nome"));
+
+                Log.d("Ordenada", "ID CESTA do bundle: " + cesta.getId());
+                for (Item i : listaItem
+                ) {
+                    if (i.getId_cesta() == cesta.getId()) {
+                        listaItensCesta.add(i.getId_bebida());
+                    }
+                }
+                RetrofitService service1 = ServiceGenerator
+                        .createService(RetrofitService.class);
+                Call<List<Bebida>> call1 = service1.getAllBebidas();
+                //fazer a busca dos dados no banco de dados
+                // bebidaList = new ArrayList<>();
+                //this.bebidaList = dao.retornarTodos();
+                call1.enqueue(new Callback<List<Bebida>>() {
+                    @Override
+                    public void onResponse(Call<List<Bebida>> call, Response<List<Bebida>> response) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                        final List<Bebida> bebidaListT;
+                        bebidaListT = response.body();
+                        for (Bebida b : bebidaListT
+                        ) {
+                            for (Integer i : listaItensCesta
+                            ) {
+                                if (b.getId() == i) {
+                                    bebidaList.add(b);
+                                }
+                            }
+
+                        }
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                        // this.bebidaList = dao.retornarBebidaByIdCesta(cesta.getId());
+                        Collections.sort(bebidaList);
+                        adapterListaOrdenada.atualizar(bebidaList);
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Bebida>> call, Throwable t) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                        Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getBaseContext(), "Não foi possível fazer a conexão", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public int getItensCesta(List<Item> list, int cestaId, int bebidaId) {
